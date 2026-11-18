@@ -1,0 +1,22 @@
+galaxy_info:
+  author: Hrafn Thorvaldsson
+  description: An Ansible role for installing Github's cli tool.
+  company: hth
+
+  license: Apache2
+
+  role_name: github
+  namespace: hth
+
+  min_ansible_version: 2.14
+
+  platforms:
+    - name: Ubuntu
+    - name: Debian
+
+  galaxy_tags:
+    - github
+    - cli
+    - git
+
+dependencies: []

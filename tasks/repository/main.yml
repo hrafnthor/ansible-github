@@ -1,0 +1,3 @@
+- name: "HTH | Github-CLI | Configure repository for Debian systems"
+  ansible.builtin.include_tasks: apt.yml
+  when: ansible_facts['os_family'] == 'Debian'
