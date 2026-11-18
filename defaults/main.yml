@@ -1,0 +1,27 @@
+# Default path to APT repository signing key
+hth_github_default_repository_signing_keyring_path: /etc/apt/keyrings
+
+# Default signing key name to use
+hth_github_default_repository_signing_keyring_file_name: githubcli-archive-keyring.gpg
+
+# Default repository url to use
+hth_github_default_repository_url: https://cli.github.com/packages
+
+# Default APT repository suite to use
+hth_github_default_repository_suite: stable
+
+# Default APT repository component to use
+hth_github_default_repository_component: main
+
+# Default location where a APT preference file for Github cli will be placed
+hth_github_default_apt_preference_path: /etc/apt/preferences.d/github-cli
+
+# Default name of the Github cli package
+hth_github_default_package_name: gh
+
+# Default package manager name version separators
+hth_github_version_separators:
+  apt: "="
+  dnf: "-"
+  dnf5: "-"
+  yum: "-"

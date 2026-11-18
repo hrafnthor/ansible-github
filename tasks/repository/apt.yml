@@ -1,0 +1,70 @@
+- name: "HTH | Github-CLI | Repository | Debian | Get host architecture"
+  ansible.builtin.command: dpkg --print-architecture
+  register: hth_github_host_architecture
+  changed_when: false
+
+- name: "HTH | Github-CLI | Repository | Debian | Assure keyrings directory"
+  ansible.builtin.file:
+    path: "{{ hth_github_default_repository_signing_keyring_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+    modification_time: preserve
+    access_time: preserve
+
+- name: "HTH | Github-CLI | Repository | Debian | | Set signing key path"
+  ansible.builtin.set_fact:
+    hth_github_signing_keyring_path: "{{ hth_github_default_repository_signing_keyring_path }}/{{ hth_github_default_repository_signing_keyring_file_name }}"
+
+- name: "HTH | Github-CLI | Repository | Debian | Add repository signing key"
+  ansible.builtin.copy:
+    src: "{{ github.signing.path }}"
+    dest: "{{ hth_github_signing_keyring_path }}"
+    force: "{{ github.signing.force | default(omit) }}"
+    owner: root
+    group: root
+    mode: 0644
+  when: github.signing is defined
+
+- name: "HTH | Github-CLI | Repository | Debian | Manage repository source listing"
+  ansible.builtin.deb822_repository:
+    name: github-cli
+    types: deb
+    uris: "{{ hth_github_default_repository_url }}"
+    suites: "{{ hth_github_default_repository_suite }}"
+    components: "{{ hth_github_default_repository_component }}"
+    architectures: "{{ hth_github_host_architecture.stdout }}"
+    signed_by: "{{ hth_github_signing_keyring_path }}"
+    state: "{{ 'present' if (github.remove is undefined or not github.remove) else 'absent' }}"
+  register: hth_github_repository_apt_results
+
+- name: "HTH | Github-CLI | Repository | Debian | Update cache"
+  ansible.builtin.apt:
+    update_cache: true
+  when: hth_github_repository_apt_results is changed
+
+- name: "HTH | Github-CLI | Repository | Debian | Prioritize repository"
+  ansible.builtin.copy:
+    src: apt/github
+    dest: "{{ hth_github_default_apt_preference_path }}"
+    owner: root
+    group: root
+    mode: 0644
+  when: github.remove is undefined or not github.remove
+
+- name: "HTH | Github-CLI | Repository | Debian | Remove repository signing keys"
+  ansible.builtin.file:
+    path: "{{ hth_github_signing_keyring_path }}"
+    state: absent
+  when:
+    - github.remove is defined
+    - github.remove
+
+- name: "HTH | Github-CLI | Repository | Debian | Remove repository prioritization"
+  ansible.builtin.file:
+    path: "{{ hth_github_default_apt_preference_path }}"
+    state: absent
+  when:
+    - github.remove is defined
+    - github.remove

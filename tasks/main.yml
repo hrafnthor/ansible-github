@@ -1,0 +1,17 @@
+- name: "HTH | Github-CLI | Assertion | Run assertions"
+  ansible.utils.validate:
+    data: "{{ github }}"
+    criteria: "{{ lookup('file', 'criteria/github-criteria.json') | from_json }}"
+    engine: ansible.utils.jsonschema
+  run_once: yes
+  delegate_to: localhost
+  when: github is defined
+
+- name: "HTH | Github-CLI | Manage repository"
+  ansible.builtin.import_tasks: repository/main.yml
+  when: github is defined
+
+- name: "HTH | Github-CLI | Manage package"
+  ansible.builtin.package:
+    name: "{{ hth_github_default_package_name + hth_github_version_separators[ansible_pkg_mgr] ~ github.version if (github.version is defined and not github.remove | default(false)) else hth_github_default_package_name }}"
+    state: "{{ 'absent' if (github.remove | default(false)) else 'present' }}"

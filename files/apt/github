@@ -1,0 +1,8 @@
+Package: gh
+Pin: origin cli.github.com
+Pin-Priority: 990
+
+# Block all other packages
+Package: *
+Pin: origin cli.github.com
+Pin-Priority: -1

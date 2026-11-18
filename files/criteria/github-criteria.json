@@ -1,0 +1,51 @@
+{
+    "title": "github",
+    "description": "schema for Github cli tool configuration",
+    "type": "object",
+    "properties":
+    {
+        "signing":
+        {
+            "type": "object",
+            "properties":
+            {
+                "path":
+                {
+                    "description": "The path to the repository key to add to the keyring. [Required]",
+                    "ref": "#/definitions/non-empty-string"
+                },
+                "force":
+                {
+                    "description": "Indicates if a potential pre existing repository key should be overwritten if found. Defaults to 'false'. [Optional].",
+                    "type": "boolean"
+                }
+            },
+            "required":
+            [
+                "path"
+            ]
+        },
+        "version":
+        {
+            "description": "The exact version to install. If omitted the latest one is installed. [Optional].",
+            "ref": "#/definitions/non-empty-string"
+        },
+        "remove":
+        {
+            "description": "Indicates if the application and repository information should be removed. Defaults to 'false'. [Optional].",
+            "type": "boolean"
+        }
+    },
+    "required":
+    [
+        "signing"
+    ],
+    "definitions":
+    {
+        "non-empty-string":
+        {
+            "type": "string",
+            "minLength": 1
+        }
+    }
+}

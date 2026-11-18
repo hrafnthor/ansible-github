@@ -1,0 +1,17 @@
+- name: Verify
+  hosts: all
+  vars_files:
+    - "../../defaults/main.yml"
+  tasks:
+  - name: Gather installed package facts
+    ansible.builtin.package_facts:
+      manager: auto
+
+  - name: Check if package is installed
+    ansible.builtin.set_fact:
+      program_installed: "{{ hth_github_default_package_name in ansible_facts.packages }}"
+
+  - name: Ensure package version was installed
+    fail:
+      msg: "Package '{{ hth_github_default_package_name }}' was not installed!"
+    when: not program_installed
